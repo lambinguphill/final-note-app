@@ -1,7 +1,7 @@
 ﻿// Simple React app without build tools
 const { useState, useEffect } = React;
 
-const API_BASE_URL = 'http://34.203.189.65/api/v1';
+const API_BASE_URL = 'https://sachinnoteapp.ddns.net/api/v1';
 
 const NoteKeeperApp = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
