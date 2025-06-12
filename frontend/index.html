@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Keeper - Production App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #383838;
+            overflow: hidden;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 21px;
+        }
+        
+        #codeContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+            background: #383838;
+        }
+        
+        .codeLine {
+            white-space: pre;
+            min-height: 21px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            color: #d4d4d4;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .welcomeMessage {
+            position: absolute;
+            font-size: 28px;
+            font-weight: bold;
+            color: #569cd6;
+            text-shadow: 0 0 20px rgba(86, 156, 214, 0.8);
+            animation: fadeInOut 3s ease-in-out forwards;
+            z-index: 1000;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        #root {
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="codeContainer"></div>
+    <div id="root"></div>
+    
+    <script>
+        // Matrix Code Rain Effect
+        const codeContainer = document.getElementById('codeContainer');
+        
+        const coloredCodeLines = [
+            '<span style="color:#569cd6">import</span> <span style="color:#4ec9b0">React</span> <span style="color:#569cd6">from</span> <span style="color:#ce9178">\'react\'</span>',
+            '<span style="color:#569cd6">import</span> { <span style="color:#9cdcfe">useState</span>, <span style="color:#9cdcfe">useEffect</span> } <span style="color:#569cd6">from</span> <span style="color:#ce9178">\'react\'</span>',
+            '<span style="color:#569cd6">import</span> <span style="color:#4ec9b0">axios</span> <span style="color:#569cd6">from</span> <span style="color:#ce9178">\'axios\'</span>',
+            '',
+            '<span style="color:#569cd6">const</span> <span style="color:#dcdcaa">NoteKeeper</span> = () => {',
+            '    <span style="color:#569cd6">const</span> [<span style="color:#9cdcfe">notes</span>, <span style="color:#9cdcfe">setNotes</span>] = <span style="color:#dcdcaa">useState</span>([]);',
+            '    <span style="color:#569cd6">const</span> [<span style="color:#9cdcfe">loading</span>, <span style="color:#9cdcfe">setLoading</span>] = <span style="color:#dcdcaa">useState</span>(<span style="color:#569cd6">false</span>);',
+            '',
+            '    <span style="color:#569cd6">const</span> <span style="color:#dcdcaa">fetchNotes</span> = <span style="color:#569cd6">async</span> () => {',
+            '        <span style="color:#569cd6">try</span> {',
+            '            <span style="color:#569cd6">const</span> <span style="color:#9cdcfe">response</span> = <span style="color:#569cd6">await</span> <span style="color:#9cdcfe">axios</span>.<span style="color:#dcdcaa">get</span>(<span style="color:#ce9178">\'/api/v1/notes\'</span>);',
+            '            <span style="color:#dcdcaa">setNotes</span>(<span style="color:#9cdcfe">response</span>.data);',
+            '        } <span style="color:#569cd6">catch</span> (<span style="color:#9cdcfe">error</span>) {',
+            '            <span style="color:#9cdcfe">console</span>.<span style="color:#dcdcaa">error</span>(<span style="color:#ce9178">\'Failed to fetch notes\'</span>, <span style="color:#9cdcfe">error</span>);',
+            '        }',
+            '    };',
+            '',
+            '    <span style="color:#dcdcaa">useEffect</span>(() => {',
+            '        <span style="color:#dcdcaa">fetchNotes</span>();',
+            '    }, []);',
+            '',
+            '    <span style="color:#569cd6">return</span> (',
+            '        <<span style="color:#569cd6">div</span> <span style="color:#9cdcfe">className</span>=<span style="color:#ce9178">"note-keeper-app"</span>>',
+            '            <<span style="color:#569cd6">h1</span>><span style="color:#ce9178">Welcome to Your World</span></<span style="color:#569cd6">h1</span>>',
+            '        </<span style="color:#569cd6">div</span>>',
+            '    );',
+            '};',
+            '',
+            '<span style="color:#569cd6">export default</span> <span style="color:#4ec9b0">NoteKeeper</span>;'
+        ];
+        
+        let currentLineIndex = 0;
+        let linesOnScreen = [];
+        const maxLinesOnScreen = 30;
+        
+        function typeCode() {
+            const currentLine = document.createElement('div');
+            currentLine.className = 'codeLine';
+            currentLine.innerHTML = coloredCodeLines[currentLineIndex];
+            currentLine.style.opacity = '0';
+            codeContainer.appendChild(currentLine);
+            linesOnScreen.push(currentLine);
+            
+            setTimeout(() => {
+                currentLine.style.opacity = '0.3';
+            }, 10);
+            
+            if (linesOnScreen.length > maxLinesOnScreen) {
+                const oldLine = linesOnScreen.shift();
+                oldLine.style.opacity = '0';
+                setTimeout(() => oldLine.remove(), 500);
+            }
+            
+            currentLineIndex = (currentLineIndex + 1) % coloredCodeLines.length;
+        }
+        
+        setInterval(typeCode, 300);
+        
+        // Initial lines
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => typeCode(), i * 100);
+        }
+        
+        // Welcome message on click
+        document.addEventListener('click', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') return;
+            
+            const messages = ["Welcome", "Let's build a world", "You are making the right choice here"];
+            messages.forEach((text, index) => {
+                setTimeout(() => {
+                    const message = document.createElement('div');
+                    message.className = 'welcomeMessage';
+                    message.textContent = text;
+                    message.style.left = (e.clientX - 100) + 'px';
+                    message.style.top = (e.clientY - 50 + index * 40) + 'px';
+                    document.body.appendChild(message);
+                    
+                    setTimeout(() => message.remove(), 3000);
+                }, index * 400);
+            });
+        });
+    </script>
+    
+    <!-- React App will be loaded here -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

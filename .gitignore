@@ -1,0 +1,13 @@
+# Python virtual environment
+venv/
+__pycache__/
+*.pyc
+
+# Environment file with secrets
+# We NEVER upload .env to GitHub
+.env
+
+# IDE and OS files
+.idea/
+.vscode/
+*.DS_Store
